@@ -15,19 +15,20 @@ anychart.onDocumentReady(function() {
     yScale.minimum(31);
     yScale.maximum(33);
     chart.xScroller(true);
-
-    chart.listen("mouseDown", function(event){
-        // document.getElementById('mytext').innerHTML = chart.splitterPosition();
-        console.log(chart.xScroller().position());
+    
+    // adding a listener
+    chart.xScroller().listen("scrollerchangefinish", function(e){
+        console.log("in scrollerchangefinish...")
+        var startRatio = e.startRatio;
+        var endRatio = e.endRatio;
+        // change the chart title
+        // chart.title("The chart shows the part from " + startRatio + " to " + endRatio);
+        mydatenum = endRatio * Object.keys(numdays).length;
+        mydatenumint = Math.round(mydatenum);
+        mydate = numdays[mydatenumint];
+        console.log(mydate);
+        calc_chart2(mydate);
     });
-
-    // events
-    // create a listener function
-    listener = function(e){
-        chart.title("The selected range is: " + anychart.format.dateTime(e.firstSelected, 'dd MMM yyyy') + " - " + anychart.format.dateTime(e.lastSelected,'dd MMM yyyy'));
-        console.log(e.lastSelected.toString());
-    }
-    chart.listen("selectedrangechange", listener);
 
     // Zooms series by defined points count.
     chart.xZoom().setToPointsCount(60, true);
@@ -35,55 +36,8 @@ anychart.onDocumentReady(function() {
     chart.container('container');
     chart.draw();
   
+    // calc_chart2(numdays[Object.keys(numdays).length-1]);
 
-
-    data2 = data;
-    // var mapping2 = dataTable.mapAs({value: 1});
-    chart2 = anychart.line();
-    chart2.padding(10, 10, 48, -5);
-    series2 = chart2.line(data2);
-
-    var labels2x = chart2.xAxis().labels();
-    labels2x.enabled(false);
-    var labels2y = chart2.yAxis().labels();
-    labels2y.enabled(false);
-    var yAxis2 = chart2.yAxis();
-    yAxis2.orientation("right");
-
-    chart2.title('Calculated projection');    
-
-    var tooltip2 = series2.tooltip();
-    tooltip2.enabled(false);
-
-    chart2.container('container2');
-    chart2.draw();
-
-
-
-    // CreateChart3();
-
-    // // var mapping2 = dataTable.mapAs({value: 1});
-    // chart4 = anychart.line();
-    // chart4.padding(10, 10, 48, -5);
-    // var series4 = chart4.line(data);
-
-    // var labels4x = chart4.xAxis().labels();
-    // labels4x.enabled(false);
-    // var labels4y = chart4.yAxis().labels();
-    // labels4y.enabled(false);
-    // var yAxis4 = chart4.yAxis();
-    // yAxis4.orientation("right");
-
-    // chart4.title('Calculated projection');    
-
-    // var tooltip4 = series4.tooltip();
-    // tooltip4.enabled(true);
-
-    // chart4.container('container4');
-    // chart4.draw();
-
-    // calc_chart2();
-    // calc_chart4();
 });
 
 function CreateChart3(){
@@ -99,18 +53,19 @@ function CreateChart3(){
 
     chart3.xScroller(true);
 
-    chart3.listen("mouseDown", function(event){
-        // document.getElementById('mytext').innerHTML = chart.splitterPosition();
-        console.log(chart3.xScroller().position());
+    // adding a listener
+    chart3.xScroller().listen("scrollerchangefinish", function(e){
+        console.log("in scrollerchangefinish...")
+        var startRatio = e.startRatio;
+        var endRatio = e.endRatio;
+        // change the chart title
+        // chart.title("The chart shows the part from " + startRatio + " to " + endRatio);
+        mydatenum = endRatio * Object.keys(numdays).length;
+        mydatenumint = Math.round(mydatenum);
+        mydate = numdays[mydatenumint];
+        console.log(mydate);
+        calc_chart4(mydate);
     });
-
-    // events
-    // create a listener function
-    listener = function(e){
-        //chart.title("The selected range is: " + anychart.format.dateTime(e.firstSelected, 'dd MMM yyyy') + " - " + anychart.format.dateTime(e.lastSelected,'dd MMM yyyy'));
-        console.log(e.lastSelected.toString());
-    }
-    chart3.listen("selectedrangechange", listener);
 
     // Zooms series by defined points count.
     chart3.xZoom().setToPointsCount(60, true);
@@ -119,17 +74,17 @@ function CreateChart3(){
     chart3.draw();
 }
 
-function calc_chart2(){
+function calc_chart2(mydate){
         if (chart2){
             chart2.dispose();
             chart2 = null;
         }
 
-        var m = slopedict["2017-09-07"];
-        var cc = meandict["2017-09-07"];
+        var m = slopedict[mydate];
+        var cc = meandict[mydate];
 
         var v_list = [];
-        for (i = 0; i < 20; i++) { 
+        for (i = 0; i < 30; i++) { 
             v = (m*i)+cc;
             v_str = "{x:"+i+",value:"+v+"};"
             v_list.push(v);
@@ -148,15 +103,30 @@ function calc_chart2(){
         yScale2.minimum(31);
         yScale2.maximum(33);
 
+        // get color for gradient
+        var colorgradient = Math.round(slopedict[mydate] * 100) / 100;
+        if (colorcode[colorgradient] == undefined){
+            colorvalue = "#2E86C1";
+        }
+        else{
+            colorvalue = colorcode[colorgradient];   
+        }
+
+        // configure the visual settings of the first series
+        series2.stroke(colorvalue, 1, "10 5", "round");
+        series2.hoverStroke(colorvalue, 2, "10 5", "round");
+        series2.selectStroke(colorvalue, 4, "10 5", "round");
+
         chart2.title('Calculated projection');    
         var tooltip2 = series2.tooltip();
         tooltip2.enabled(false);
 
         chart2.container('container2');
         chart2.draw();
+        
     }
 
-    function calc_chart4(){
+    function calc_chart4(mydate){
         if (chart4){
             chart4.dispose();
             chart4 = null;
@@ -164,11 +134,11 @@ function calc_chart2(){
 
         slopedict = getcalcdaysslope();
         meandict = getcalcdaysmean();
-        var m = slopedict["2017-09-07"];
-        var cc = meandict["2017-09-07"];
+        var m = slopedict[mydate];
+        var cc = meandict[mydate];
 
         var v_list = [];
-        for (i = 0; i < 20; i++) { 
+        for (i = 0; i < 30; i++) { 
             v = (m*i)+cc;
             v_str = "{x:"+i+",value:"+v+"};"
             v_list.push(v);
@@ -186,6 +156,20 @@ function calc_chart2(){
         var yScale4 = chart4.yScale();
         yScale4.minimum(31);
         yScale4.maximum(33);
+
+        // get color for gradient
+        var colorgradient = Math.round(slopedict[mydate] * 100) / 100;
+        if (colorcode[colorgradient] == undefined){
+            colorvalue = "#2E86C1";
+        }
+        else{
+            colorvalue = colorcode[colorgradient];   
+        }
+
+        // configure the visual settings of the first series
+        series4.stroke(colorvalue, 1, "10 5", "round");
+        series4.hoverStroke(colorvalue, 2, "10 5", "round");
+        series4.selectStroke(colorvalue, 4, "10 5", "round");
 
         chart4.title('Calculated projection');    
         var tooltip4 = series4.tooltip();
@@ -218,3 +202,4 @@ function calc_chart2(){
             calc_chart4();
         }
     }
+

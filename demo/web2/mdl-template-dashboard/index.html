@@ -65,6 +65,8 @@
     <script type="text/javascript" src="daysmean.js"></script>
     <script type="text/javascript" src="calc_daysmean.js"></script>
     <script type="text/javascript" src="calc_daysslope.js"></script>
+    <script type="text/javascript" src="calc_numdays.js"></script>
+    <script type="text/javascript" src="calc_colorgradient.js"></script>
 
     <script>
       console.log("Enabling F12");
@@ -85,6 +87,8 @@
 
       slopedict = getcalcdaysslope();
       meandict = getcalcdaysmean();
+      numdays = getnumdays();
+      colorcode = getcolorcode();
     </script>
 
     <style>
@@ -163,7 +167,7 @@
 
       <main class="mdl-layout__content mdl-color--grey-100">
         <div class="mdl-grid demo-content">
-          <div class="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+          <div class="demo-charts mdl-color--grey-100 mdl-cell mdl-cell--12-col mdl-grid">
               <div class="mdl-button" onclick="SingleChart()">Single Chart</div>
               <div class="mdl-button" onclick="DualChart()">Dual Chart</div>
           </div>
