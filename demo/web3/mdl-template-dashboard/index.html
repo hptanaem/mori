@@ -62,6 +62,7 @@
     <script type="text/javascript" src="calc_colorgradient.js"></script>
     <script type="text/javascript" src="daysoee.js"></script>
     <script type="text/javascript" src="daysbins.js"></script>
+    <script type="text/javascript" src="calc_daysoee.js"></script>
 
     <script>
       console.log("Enabling F12");
@@ -75,11 +76,8 @@
       document.addEventListener('touchmove', this._preventDefault, { passive: false });
 
       var singlemode = true;
-      var chart_oee;
-      var hischart;
       var hischart2;
       var series2;
-      var series3;
       var myScroller;
       var scroll1_begin;
       var scroll1_end;
@@ -87,7 +85,9 @@
       var scroll2_begin;
       var scroll2_end;
       var curscroll_begin = 0.75;
-      var curscroll_end = 1;
+      var curscroll_end = 1.1;
+      var curdate_begin;
+      var curdate_end;
 
       var lineChart;
       var predict_chartdata1;
@@ -103,11 +103,33 @@
       var predicted2 = false;
       var chart_predicted_index2;
 
+      var hischart;
+      var hisdata1;
+      var hisseries1;
+      var hisdrawn = false;
+      var hisbinning1;
+
+      var hisdata2;
+      var hisseries2;
+      var hisbinning2;
+
+      var chart_oee;
+      var oeedrawn = false;
+      var oeedata1;
+      var oeeseries1;
+      var oeedata2;
+      var oeeseries2;
+      var begindate1;
+      var enddate1;
+      var begindate2;
+      var enddate2;
+
       slopedict = getcalcdaysslope();
       meandict = getcalcdaysmean();
       numdays = getnumdays();
       colorcode = getcolorcode();
       oee = getoee();
+      calcoee = getcalcoee();
       daysbins = getbins();
     </script>
 
@@ -214,11 +236,9 @@
           </div>
           <div class="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col mdl-grid">
             <div id="container7" style="float: top; width: 100%; height: 400px;"></div>
-            <div id="container8" style="float: top; width: 100%; height: 1px;"></div>
           </div>
           <div class="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col mdl-grid">
             <div id="container5" style="float: top; width: 100%; height: 400px;"></div>
-            <div id="container6" style="float: top; width: 100%; height: 1px;"></div>
           </div>
       </main>
     </div>
