@@ -10,6 +10,9 @@ anychart.onDocumentReady(function() {
     chart.title('Mean');    
 
     var series = chart.line(data);
+    series.stroke(color_graph, 1, "round");
+    series.hoverStroke(color_graph, 2, "round");
+    series.selectStroke(color_graph, 4, "round");
     
     var yScale = chart.yScale();
     yScale.minimum(30);
@@ -18,38 +21,17 @@ anychart.onDocumentReady(function() {
     
     // adding a listener
     chart.xScroller().listen("scrollerchangefinish", function(e){
-        console.log("in scrollerchangefinish...")
         var startRatio = e.startRatio;
         var endRatio = e.endRatio;
-        setGraph2(e.startRatio, e.endRatio);
-        // change the chart title
-        // chart.title("The chart shows the part from " + startRatio + " to " + endRatio);
-        // if (startRatio == 0){
-        //     mystartdate = numdays[1];
-        // }
-        // else{
-        //     mystartdatenum = startRatio * Object.keys(numdays).length;
-        //     mystartdatenumint = Math.round(mystartdatenum);
-        //     mystartdate = numdays[mystartdatenumint];       
-        // }
-        // myenddatenum = endRatio * Object.keys(numdays).length;
-        // myenddatenumint = Math.round(myenddatenum);
-        // myenddate = numdays[myenddatenumint];
-        // console.log(myenddate);
-        // calc_chart2(myenddate);
-
-        // //create histogram
-        // bbinning = CalcBins(mystartdate, myenddate);
-        // CreateHistogram1(bbinning);
     });
 
     // Zooms series by defined points count.
-    chart.xZoom().setToPointsCount(60, true);
+    // chart.xZoom().setToPointsCount(60, true);
+    chart.xZoom().setTo(curscroll_begin, curscroll_end);
 
     chart.container('container');
     chart.draw();
   
-    // calc_chart2(numdays[Object.keys(numdays).length-1]);
     CreateOEE();
 
     //create histogram
@@ -57,168 +39,16 @@ anychart.onDocumentReady(function() {
     CreateHistogram1(bbinning);
 
     CreateScroller("container_scroller");
+    settime_3month();
 });
 
-function CreateChart_line2(){
-    chart3 = anychart.line();
-    chart3.padding(10, 0, 10, 50);
-    chart3.title('Mean'); 
-
-    series3 = chart3.line(data);
-    series3.stroke("#FDAE01", 1, "round");
-    series3.hoverStroke("#D35400", 2, "round");
-    series3.selectStroke("#BA4A00", 2, "round")
-
-    var yScale3 = chart3.yScale();
-    yScale3.minimum(30);
-    yScale3.maximum(33);
-
-    chart3.xScroller(false);
-
-    // adding a listener
-    chart3.xScroller().listen("scrollerchangefinish", function(e){
-        console.log("in scrollerchangefinish...")
-        var startRatio = e.startRatio;
-        var endRatio = e.endRatio;
-        setGraph2(e.startRatio, e.endRatio);
-
-        // if (startRatio == 0){
-        //     mystartdate = numdays[1];
-        // }
-        // else{
-        //     mystartdatenum = startRatio * Object.keys(numdays).length;
-        //     mystartdatenumint = Math.round(mystartdatenum);
-        //     mystartdate = numdays[mystartdatenumint];       
-        // }
-        // myenddatenum = endRatio * Object.keys(numdays).length;
-        // myenddatenumint = Math.round(myenddatenum);
-        // myenddate = numdays[myenddatenumint];
-        // console.log(myenddate);
-        // calc_chartPredict2(myenddate);
-
-        // //create histogram
-        // bbinning = CalcBins(mystartdate, myenddate);
-        // CreateHistogram2(bbinning);
-    });
-
-    // Zooms series by defined points count.
-    chart3.xZoom().setToPointsCount(60, true);
-
-    chart3.container('container3');
-    chart3.draw();
-}
-
-function calc_chart2(mydate){
-    if (chart2){
-        chart2.dispose();
-        chart2 = null;
-    }
-
-    var m = slopedict[mydate];
-    var cc = meandict[mydate];
-
-    var v_list = [];
-    for (i = 0; i < 30; i++) { 
-        v = (m*i)+cc;
-        v_str = "{x:"+i+",value:"+v+"};"
-        v_list.push(v);
-    }       
-    chart2 = anychart.line();
-    chart2.padding(10, 10, 33, -5);
-    series2 = chart2.line(v_list);
-
-    var labels2x = chart2.xAxis().labels();
-    labels2x.enabled(false);
-    var labels2y = chart2.yAxis().labels();
-    labels2y.enabled(true);
-    var yAxis2 = chart2.yAxis();
-    yAxis2.orientation("right");
-    var yScale2 = chart2.yScale();
-    yScale2.minimum(30);
-    yScale2.maximum(33);
-
-    // get color for gradient
-    var colorgradient = Math.round(slopedict[mydate] * 100) / 100;
-    if (colorcode[colorgradient] == undefined){
-        colorvalue = "#2E86C1";
-    }
-    else{
-        colorvalue = colorcode[colorgradient];   
-    }
-
-    // configure the visual settings of the first series
-    series2.stroke(colorvalue, 1, "10 5", "round");
-    series2.hoverStroke(colorvalue, 2, "10 5", "round");
-    series2.selectStroke(colorvalue, 4, "10 5", "round");
-
-    chart2.title('Calculated projection');    
-    var tooltip2 = series2.tooltip();
-    tooltip2.enabled(false);
-
-    chart2.container('container2');
-    chart2.draw();
-    
-}
-
-function calc_chartPredict2(mydate){
-    if (chart4){
-        chart4.dispose();
-        chart4 = null;
-    }
-
-    var m = slopedict[mydate];
-    var cc = meandict[mydate];
-
-    var v_list = [];
-    for (i = 0; i < 30; i++) { 
-        v = (m*i)+cc;
-        v_str = "{x:"+i+",value:"+v+"};"
-        v_list.push(v);
-    }       
-    chart4 = anychart.line();
-    chart4.padding(10, 10, 48, -5);
-    series4 = chart4.line(v_list);
-
-    var labels4x = chart4.xAxis().labels();
-    labels4x.enabled(false);
-    var labels4y = chart4.yAxis().labels();
-    labels4y.enabled(true);
-    var yAxis4 = chart4.yAxis();
-    yAxis4.orientation("right");
-    var yScale4 = chart4.yScale();
-    yScale4.minimum(30);
-    yScale4.maximum(33);
-
-    // get color for gradient
-    var colorgradient = Math.round(slopedict[mydate] * 100) / 100;
-    if (colorcode[colorgradient] == undefined){
-        colorvalue = "#2E86C1";
-    }
-    else{
-        colorvalue = colorcode[colorgradient];   
-    }
-
-    // configure the visual settings of the first series
-    series4.stroke(colorvalue, 1, "10 5", "round");
-    series4.hoverStroke(colorvalue, 2, "10 5", "round");
-    series4.selectStroke(colorvalue, 4, "10 5", "round");
-
-    chart4.title('Calculated projection');    
-    var tooltip4 = series4.tooltip();
-    tooltip4.enabled(true);
-
-    chart4.container('container4');
-    chart4.draw();
-}
-
-function stop_calc(){}
-
 function SingleChart(){
-    if (chart3){
-        chart3.dispose();
-        chart3 = null;
-        chart4.dispose();
-        chart4 = null;
+    if (!singlemode){
+        singlemode = true;
+        // chart3.dispose();
+        // chart3 = null;
+        // chart4.dispose();
+        // chart4 = null;
         chart_oee2.dispose();
         chart_oee2 = null;
         hischart2.dispose();
@@ -226,24 +56,38 @@ function SingleChart(){
         myScroller2.dispose();
         myScroller2 = null;
 
-        document.getElementById('container3').style.height='1px';
-        document.getElementById('container4').style.height='1px';
+        curscroll_begin = scroll1_begin;
+        curscroll_end = scroll1_end;
+
+        // document.getElementById('container3').style.height='1px';
+        // document.getElementById('container4').style.height='1px';
         document.getElementById('container6').style.height='1px';
         document.getElementById('container8').style.height='1px';
         document.getElementById('container_scroller2').style.height='1px';
+        document.getElementById('settime_all2').style.height='1px';
+        document.getElementById('settime_6mth2').style.height='1px';
+        document.getElementById('settime_3mth2').style.height='1px';
+        document.getElementById('scroller_timeframe').style.height='1px';
+        document.getElementById('label_Scroller1').style.height='1px';
     }
 }
 
 function DualChart(){
-    if (!chart3)
+    if (singlemode)
     {
-        document.getElementById('container3').style.height='400px';
-        document.getElementById('container4').style.height='400px';
+        singlemode = false;
+        // document.getElementById('container3').style.height='400px';
+        // document.getElementById('container4').style.height='400px';
         document.getElementById('container6').style.height='400px';
         document.getElementById('container8').style.height='400px';
-        document.getElementById('container_scroller2').style.height='100px';
-        CreateChart_line2();
-        calc_chartPredict2();
+        document.getElementById('container_scroller2').style.height='60px';
+        document.getElementById('settime_all2').style.height='36px';
+        document.getElementById('settime_6mth2').style.height='36px';
+        document.getElementById('settime_3mth2').style.height='36px';
+        document.getElementById('scroller_timeframe').style.height='36px';
+        document.getElementById('label_Scroller1').style.height='36px';
+        // CreateChart_line2();
+        // calc_chartPredict2();
         CreateChart_oee2();
         //create histogram
         bbinning = CalcBins(numdays["1"], numdays[Object.keys(numdays).length-1]);
@@ -277,28 +121,28 @@ function CreateOEE(){
 function CreateChart_oee2(){
     chart_oee2 = anychart.line();
     chart_oee2.padding(10, 10, 48, 10);
-    series_oee2 = chart_oee2.area(oee);
+    series_oee2 = chart_oee.area(oee);
 
     series_oee2.fill("#FDAE01", 0.5);
     series_oee2.hoverFill("#D35400", 0.3);
     series_oee2.selectFill("#BA4A00", 0.5);
     series_oee2.stroke("#873600", 1, "round");
 
-    chart_oee2.xScroller(true);
+    chart_oee.xScroller(false);
 
-    chart_oee2.title('OEE');
+    chart_oee.title('OEE');
     var tooltip_oee2 = series_oee2.tooltip();
     tooltip_oee2.enabled(false);
 
     // Zooms series by defined points count.
-    chart_oee2.xZoom().setToPointsCount(60, true);
-    var crosshair = chart_oee2.crosshair();
+    chart_oee.xZoom().setToPointsCount(60, true);
+    var crosshair = chart_oee.crosshair();
     crosshair.enabled(true);
     // crosshair.yStroke(false);
     crosshair.yLabel(false);
 
-    chart_oee2.container('container6');
-    chart_oee2.draw();
+    chart_oee.container('container5');
+    chart_oee.draw();
 }
 
 function CreateHistogram1(bin){
@@ -309,7 +153,6 @@ function CreateHistogram1(bin){
         hischart=null;
     }
 
-    console.log(bin)
      // create a data set
     var data = anychart.data.set([
         ["bin1",bin[0]],
@@ -398,7 +241,6 @@ function CreateHistogram2(bin){
         hischart2=null;
     }
 
-    console.log(bin)
      // create a data set
     var data = anychart.data.set([
         ["bin1",bin[0]],
@@ -485,9 +327,6 @@ function CreateHistogram2(bin){
 }
 
 function CalcBins(startdate, enddate){
-    console.log(startdate);
-    console.log(enddate);
-
     var startindex = 1;
     for(var key in daysbins)
     {
@@ -522,24 +361,14 @@ function CalcBins(startdate, enddate){
             return calcbin;
         }
         if (bget){
-            console.log(key);
-            console.log(calcbin);
             if (calcbin.length == 0){
                 calcbin = daysbins[key];
             }
             else{
-                console.log("adding:");
-                console.log(calcbin);
-                console.log(daysbins[key]);
-                console.log("====");
                 calcbin = sumarray(calcbin, daysbins[key]);
-                console.log(calcbin);
-                console.log("====");
-                console.log("====");
             }
         }
     }
-    // console.log(calcbin);
     return calcbin;
 }
 
@@ -552,7 +381,6 @@ function sumarray(array1, array2){
 }
 
 function CreateScroller(container){
-    console.log("creating CreateScroller..." + container);
     if (myScroller){
         myScroller.dispose();
         myScroller=null
@@ -561,43 +389,77 @@ function CreateScroller(container){
     myScroller = anychart.ui.scroller();
     //myScroller.parentBounds(<left>, <top>, <scroller_length>, <margintop>);
     myScroller.parentBounds(20, 0, 800, 50);
-    myScroller.outlineStroke("#95A5A6", 1, "round");
-    myScroller.fill("#95A5A6");
+    myScroller.outlineStroke("#D5DBDB", 1, "round");
     // Sets range.
     myScroller.setRange(0.75, 1.0);
-    myScroller.selectedFill('#85C1E9');
+    myScroller.selectedFill(color_predict1);
 
     myScroller.listen("scrollerchange", function(e){
-        console.log(e.startRatio);
-        console.log(e.endRatio);
         scroll1_begin = e.startRatio;
         scroll1_end = e.endRatio;
 
+        var nowscroll_begin;
+        var nowscroll_end;
+        if (!singlemode){
+            if (scroll1_begin < scroll2_begin){
+                nowscroll_begin = scroll1_begin;
+            }
+            if (scroll1_end > scroll2_end){
+                nowscroll_end = scroll1_end;
+            }
+        }
+        else{
+            nowscroll_begin = scroll1_begin;
+            nowscroll_end = scroll1_end;
+        }
+
         var Zoom1 = chart.xZoom();
-        Zoom1.setTo(e.startRatio, e.endRatio);
+        Zoom1.setTo(nowscroll_begin, nowscroll_end + 0.1);
+
+        var Zoom2 = chart_oee.xZoom();
+        Zoom2.setTo(e.startRatio, e.endRatio);
     });
 
     myScroller.listen("scrollerchangefinish", function(e){
-        console.log(e.startRatio);
-        console.log(e.endRatio);
         scroll1_begin = e.startRatio;
         scroll1_end = e.endRatio;
 
+        if (!singlemode){
+            if (scroll1_begin < scroll2_begin){
+                curscroll_begin = scroll1_begin;
+            }
+            else{
+                curscroll_begin = scroll2_begin;
+            }
+            if (scroll1_end > scroll2_end){
+                curscroll_end = scroll1_end;
+            }
+            else{
+                curscroll_end = scroll2_end;
+            }
+        }
+        else{
+            curscroll_begin = scroll1_begin;
+            curscroll_end = scroll1_end;
+        }
+
         var Zoom1 = chart.xZoom();
-        Zoom1.setTo(e.startRatio, e.endRatio);
+        Zoom1.setTo(curscroll_begin, curscroll_end + 0.1);
 
         var Zoom2 = chart_oee.xZoom();
         Zoom2.setTo(e.startRatio, e.endRatio);
 
         setGraph1(e.startRatio, e.endRatio);
+        console.log("setGraph1 from scrollerchangefinish CreateScroller");
     });
 
     myScroller.container(container);
     myScroller.draw();
+    setGraph1(curscroll_begin, curscroll_end);
+    console.log("setGraph1 from main CreateScroller");
 }
 
 function CreateScroller2(container){
-    console.log("creating CreateScroller..." + container);
     if (myScroller2){
         myScroller2.dispose();
         myScroller2=null
@@ -608,27 +470,59 @@ function CreateScroller2(container){
     myScroller2.parentBounds(20, 0, 800, 50);
     myScroller2.outlineStroke("#D5DBDB", 1, "round");
     // Sets range.
-    myScroller2.setRange(0.75, 1.0);
+    myScroller2.setRange(curscroll_begin, curscroll_end);
     myScroller2.selectedFill('#DC7633');
 
     myScroller2.listen("scrollerchange", function(e){
-        console.log(e.startRatio);
-        console.log(e.endRatio);
         scroll2_begin = e.startRatio;
         scroll2_end = e.endRatio;
 
-        var Zoom1 = chart3.xZoom();
-        Zoom1.setTo(e.startRatio, e.endRatio);
+        var nowscrol2_begin;
+        var nowscrol2_end;
+        if (!singlemode){
+            if (scroll2_begin < scroll1_begin){
+                nowscrol2_begin = scroll2_begin;
+            }
+            if (scroll2_end > scroll1_end){
+                nowscrol2_end = scroll2_end;
+            }
+        }
+        else{
+            nowscrol2_begin = scroll2_begin;
+            nowscrol2_end = scroll2_end;
+        }
+        var Zoom1 = chart.xZoom();
+        Zoom1.setTo(nowscrol2_begin, nowscrol2_end + 0.1);
+
+        var Zoom2 = chart_oee2.xZoom();
+        Zoom2.setTo(e.startRatio, e.endRatio);
     });
 
     myScroller2.listen("scrollerchangefinish", function(e){
-        console.log(e.startRatio);
-        console.log(e.endRatio);
         scroll2_begin = e.startRatio;
         scroll2_end = e.endRatio;
 
-        var Zoom1 = chart3.xZoom();
-        Zoom1.setTo(e.startRatio, e.endRatio);
+        if (!singlemode){
+            if (scroll1_begin < scroll2_begin){
+                curscroll_begin = scroll1_begin;
+            }
+            else{
+                curscroll_begin = scroll2_begin;
+            }
+            if (scroll1_end > scroll2_end){
+                curscroll_end = scroll1_end;
+            }
+            else{
+                curscroll_end = scroll2_end;
+            }
+        }
+        else{
+            curscroll_begin = scroll1_begin;
+            curscroll_end = scroll1_end;
+        }
+
+        var Zoom1 = chart.xZoom();
+        Zoom1.setTo(curscroll_begin, curscroll_end + 0.1);
 
         var Zoom2 = chart_oee2.xZoom();
         Zoom2.setTo(e.startRatio, e.endRatio);
@@ -638,6 +532,7 @@ function CreateScroller2(container){
 
     myScroller2.container(container);
     myScroller2.draw();
+    settime_3month2();
 }
 
 function setGraph1(startRatio, endRatio){
@@ -652,12 +547,15 @@ function setGraph1(startRatio, endRatio){
         myenddatenum = endRatio * Object.keys(numdays).length;
         myenddatenumint = Math.round(myenddatenum);
         myenddate = numdays[myenddatenumint];
-        console.log(myenddate);
-        calc_chart2(myenddate);
+        // calc_chart2(myenddate, myenddatenumint);
+        new_calcchart1(myenddate, myenddatenumint);
 
         //create histogram
         bbinning = CalcBins(mystartdate, myenddate);
         CreateHistogram1(bbinning);
+
+        var Zoom2 = chart_oee.xZoom();
+        Zoom2.setTo(startRatio, endRatio);
 }
 
 function setGraph2(startRatio, endRatio){
@@ -672,10 +570,228 @@ function setGraph2(startRatio, endRatio){
         myenddatenum = endRatio * Object.keys(numdays).length;
         myenddatenumint = Math.round(myenddatenum);
         myenddate = numdays[myenddatenumint];
-        console.log(myenddate);
-        calc_chartPredict2(myenddate);
+        // calc_chart2(myenddate, myenddatenumint);
+        new_calcchart2(myenddate, myenddatenumint);
 
         //create histogram
         bbinning = CalcBins(mystartdate, myenddate);
         CreateHistogram1(bbinning);
+
+        var Zoom2 = chart_oee.xZoom();
+        Zoom2.setTo(startRatio, endRatio);
 }
+
+function new_calcchart1(mydate, myenddatenumint){
+    var m = slopedict[mydate];
+    var cc = meandict[mydate];
+
+    var predicting_data = [];
+    var predicting_date = [];
+    for (i = 0; i < 30; i++) { 
+        v = (m*i)+cc;
+        predicting_data.push(v);
+    }
+
+    predicting_date = get_datelist(mydate, predicting_data.length);
+    predict_chartdata1 = get_emptychartingdata();
+    predict_chartdata1 = get_Appendchartdata(predict_chartdata1, predicting_date, predicting_data);
+
+    draw_predict();
+}
+
+function new_calcchart2(mydate, myenddatenumint){
+    var m = slopedict[mydate];
+    var cc = meandict[mydate];
+
+    var predicting_data = [];
+    var predicting_date = [];
+    for (i = 0; i < 30; i++) { 
+        v = (m*i)+cc;
+        predicting_data.push(v);
+    }
+
+    predicting_date = get_datelist(mydate, predicting_data.length);
+    predict_chartdata2 = get_emptychartingdata();
+    predict_chartdata2 = get_Appendchartdata(predict_chartdata2, predicting_date, predicting_data);
+
+    draw_predict();
+}
+
+function draw_predict(){
+    if (predicted1){
+        for (i = 1; i<=chart.getSeriesCount(); i++ )
+            if (i = 1)
+                chart.removeSeriesAt(i);
+    }
+    else{
+        predicted1 = true;
+        chart_predicted_index1 = chart.getSeriesCount();
+        console.log("chart_predicted_index2 = " + chart_predicted_index1);
+    }
+    series1 = chart.line(predict_chartdata1);
+    // configure the visual settings of the first series
+    series1.stroke(color_predict1, 1, "10 5", "round");
+    series1.hoverStroke(color_predict1, 2, "10 5", "round");
+    series1.selectStroke(color_predict1, 4, "10 5", "round");
+
+    if (!singlemode){
+        series2 = chart.line(predict_chartdata2);
+        // configure the visual settings of the first series
+        series2.stroke(color_predict2, 1, "10 5", "round");
+        series2.hoverStroke(color_predict2, 2, "10 5", "round");
+        series2.selectStroke(color_predict2, 4, "10 5", "round");
+    }
+}
+
+function get_emptychartingdata(){
+    return anychart.data.set([]);
+}
+
+function add_draw_predictchart1(){
+    // create mapping list on one data set
+    lineChart = anychart.line(predict_chartdata1);
+    console.log("create linechart :::: ");
+    console.log(predict_chartdata1);
+    console.log("create linechart end :::: ");
+    
+    // set container id for the chart
+    lineChart.title('New York weather');
+    lineChart.getSeries(0).name('New York');
+    // initiate chart drawing
+    lineChart.container(containertest).draw();
+}
+
+function get_datelist(mystartdate, mydatalistlenght){
+    var startdateindex;
+    var i;
+    for (i = 0; i < Object.keys(numdays).length; i++) { 
+        if(numdays[i]==mystartdate){
+            break;
+        }
+    }
+    startdateindex = i;
+    var datelist = [];
+    var inum = 0;
+    for (i = startdateindex; i < startdateindex + mydatalistlenght; i++) {
+        if (i > Object.keys(numdays).length){
+            // console.log("getdate from Date func")
+            var lastdate = parseDate(numdays[Object.keys(numdays).length-1]);
+            var newdate = new Date();
+            newdate.setDate(lastdate.getDate() + inum);
+            newdate = formatDate(newdate);
+            datelist.push(newdate);
+            inum++;
+        }
+        else{
+            // console.log("getdate from numdays")
+            datelist.push(numdays[i]);
+        }
+    }
+    return datelist;
+}
+
+function get_Appendchartdata(mychartdata, mydatelist, mydatalist){
+    if (mychartdata){
+        for (i = 0; i< mydatelist.length; i++){
+            // console.log("appending.." + i);
+            // console.log("appending....." + mydatelist[i]);
+            // console.log("appending....." + mydatalist[i]);
+            mychartdata.append( {x: mydatelist[i], value: mydatalist[i]})
+        }
+        // mychartdata.append( {x:"2017-01-07",value:mydata[0]});
+        // data.append({x: "new P"    ,value : 1 });
+        return mychartdata;
+    }
+}
+
+// parse a date in yyyy-mm-dd format
+function parseDate(input) {
+  var parts = input.match(/(\d+)/g);
+  // new Date(year, month [, date [, hours[, minutes[, seconds[, ms]]]]])
+  return new Date(parts[0], parts[1]-1, parts[2]); // months are 0-based
+}
+
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
+function settime_chart1(click_start, click_end){
+    scroll1_begin = click_start;
+    scroll1_end = 1.1;
+    myScroller.setRange(click_start, click_end);
+
+    var Zoom1 = chart.xZoom();
+    Zoom1.setTo(click_start, click_end + 0.1);
+
+    var Zoom2 = chart_oee.xZoom();
+    Zoom2.setTo(click_start, click_end);
+
+    setGraph1(click_start, click_end);
+}
+
+function settime_3month(){
+    click_start = 0.57;
+    click_end = 1.0;
+
+    settime_chart1(click_start,click_end);
+}
+
+function settime_6month(){
+    click_start = 0.24;
+    click_end = 1.0;
+
+    settime_chart1(click_start,click_end);
+}
+
+function settime_all(){
+    click_start = 0.0;
+    click_end = 1.0;
+
+    settime_chart1(click_start,click_end);
+}
+
+function settime_chart2(click_start, click_end){
+    if (!singlemode){
+        scroll2_begin = click_start;
+        scroll2_end = 1.1;
+        myScroller2.setRange(click_start, click_end);
+        
+        var Zoom1 = chart.xZoom();
+        Zoom1.setTo(click_start, click_end + 0.1);
+
+        var Zoom3 = chart_oee2.xZoom();
+        Zoom3.setTo(click_start, click_end);
+
+        setGraph2(click_start, click_end);
+    }
+}
+
+function settime_3month2(){
+    click_start = 0.57;
+    click_end = 1.0;
+
+    settime_chart2(click_start,click_end);
+}
+
+function settime_6month2(){
+    click_start = 0.24;
+    click_end = 1.0;
+
+    settime_chart2(click_start,click_end);
+}
+
+function settime_all2(){
+    click_start = 0.0;
+    click_end = 1.0;
+
+    settime_chart2(click_start,click_end);
+}
+
