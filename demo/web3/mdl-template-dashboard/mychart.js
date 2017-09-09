@@ -63,8 +63,6 @@ anychart.onDocumentReady(function() {
 function SingleChart(){
     if (!singlemode){
         singlemode = true;
-        hischart2.dispose();
-        hischart2 = null;
         myScroller2.dispose();
         myScroller2 = null;
 
