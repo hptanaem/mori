@@ -1,0 +1,12 @@
+Run with chrome:
+1. Unzip RealSmart.7z
+2. Execute RealSmart/Web/index.html.
+
+Run with electron:
+1. Unzip RealSmart.7z
+2. Copy REALSMART unzip directory location
+3. Modify "index.js" last line:
+	mainWindow.loadURL('file://C:/Users/User/Desktop/RealSmart/web/index.html');
+   with your unzip location
+	mainWindow.loadURL('file://<yourlocation>/RealSmart/web/index.html');
+4. Execute RealSmart/Start_RealSmart.bat

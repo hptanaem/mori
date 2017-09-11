@@ -1,0 +1,250 @@
+<!doctype html>
+<!--
+  Material Design Lite
+  Copyright 2015 Google Inc. All rights reserved.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>RealSmart</title>
+
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="images/android-desktop.png">
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+    <link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
+
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+
+    <link rel="shortcut icon" href="images/favicon.png">
+
+    <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
+    <!--
+    <link rel="canonical" href="http://www.example.com/">
+    -->
+
+    <link rel="stylesheet" href="googleapis_roboto.css">
+    <link rel="stylesheet" href="googleapis_fonticons.css">
+
+    <link href="mdi\css\materialdesignicons.css" media="all" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="material.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="http://static.anychart.com/cdn/js/7.14.3/anychart.min.js" type="text/javascript"></script>
+    <script src="mychart.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="anychart-ui.css">
+    <script type="text/javascript" src="jquery.min.js"></script>
+
+    <script type="text/javascript" src="daysmean.js"></script>
+    <script type="text/javascript" src="calc_daysmean.js"></script>
+    <script type="text/javascript" src="calc_daysslope.js"></script>
+    <script type="text/javascript" src="calc_numdays.js"></script>
+    <script type="text/javascript" src="calc_colorgradient.js"></script>
+    <script type="text/javascript" src="daysoee.js"></script>
+    <script type="text/javascript" src="daysbins.js"></script>
+    <script type="text/javascript" src="calc_daysoee.js"></script>
+
+    <script>
+      console.log("Enabling F12");
+      document.addEventListener("keydown", function (e) {
+        if (e.which === 123) {
+          require('electron').remote.getCurrentWindow().toggleDevTools();
+        } else if (e.which === 116) {
+          location.reload();
+        }
+      });
+      document.addEventListener('touchmove', this._preventDefault, { passive: false });
+
+      var singlemode = true;
+      var hischart2;
+      var series2;
+      var myScroller;
+      var scroll1_begin;
+      var scroll1_end;
+      var myScroller2;
+      var scroll2_begin;
+      var scroll2_end;
+      var curscroll_begin = 0.75;
+      var curscroll_end = 1.1;
+      var curdate_begin;
+      var curdate_end;
+
+      var lineChart;
+      var predict_chartdata1;
+      var predicted1 = false;
+      var chart_predicted_index1;
+
+      var color_graph = "#2471A3";
+      var color_predict1 = "#85C1E9";
+      var color_predict2 = "#D35400";
+
+      var lineChart2;
+      var predict_chartdata2;
+      var predicted2 = false;
+      var chart_predicted_index2;
+
+      var hischart;
+      var hisdata1;
+      var hisseries1;
+      var hisdrawn = false;
+      var hisbinning1;
+
+      var hisdata2;
+      var hisseries2;
+      var hisbinning2;
+
+      var chart_oee;
+      var oeedrawn = false;
+      var oeedata1;
+      var oeeseries1;
+      var oeedata2;
+      var oeeseries2;
+      var begindate1;
+      var enddate1;
+      var begindate2;
+      var enddate2;
+
+      slopedict = getcalcdaysslope();
+      meandict = getcalcdaysmean();
+      numdays = getnumdays();
+      colorcode = getcolorcode();
+      oee = getoee();
+      calcoee = getcalcoee();
+      daysbins = getbins();
+    </script>
+
+    <style>
+    #view-source {
+      position: fixed;
+      display: block;
+      right: 0;
+      bottom: 0;
+      margin-right: 40px
+;      margin-bottom: 40px;
+      z-index: 900;
+    }
+    </style>
+  </head>
+  <body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+      <header class="demo-header mdl-layout__header mdl-color--mydarkblue-100 mdl-color-text--grey-100">
+        <div aria-expanded="false" role="button" tabindex="0" class="mdl-layout__drawer-button mdl-color-text--mywhite mdl-color--mylightblue-100 mdi mdi-menu" style="top:40px;padding-top: 10px; height: 93%"></div>
+        <div aria-expanded="false" role="button" tabindex="0" class="mdl-layout__drawer-button mdl-color-text--mywhite mdl-color--mylightblue-100" style="top:85px;padding-top: 10px; height: 20px"><i class="mdl-color-text--mywhite material-icons" role="presentation">home</i></div>
+        <div aria-expanded="false" role="button" tabindex="0" class="mdl-layout__drawer-button mdl-color-text--mywhite mdl-color--mylightblue-100" style="top:130px;padding-top: 10px; height: 30px"><i class="mdl-color-text--mywhite material-icons mdi mdi-factory" role="presentation"></i>
+          <span class="mdl-badge-sidebar" style="right:" data-badge="1"></span>
+        </div>
+        <div aria-expanded="false" role="button" tabindex="0" class="mdl-layout__drawer-button mdl-color-text--mywhite mdl-color--mylightblue-100" style="top:180px;padding-top: 10px; height: 20px"><i class="mdl-color-text--mywhite material-icons" role="presentation">flag</i></div>
+        <div aria-expanded="false" role="button" tabindex="0" class="mdl-layout__drawer-button mdl-color-text--mywhite mdl-color--mylightblue-100" style="top:225px;padding-top: 10px; height: 20px"><i class="mdl-color-text--mywhite material-icons" role="presentation">people</i></div>
+        <!-- <div class="mdl-color-text--mywhite mdl-color--mylightblue-100" style="position: fixed;z-index: 10; top:80px; left:4px; padding-top: 10px; height: 20px"><i class="mdl-color-text--mywhite material-icons" role="presentation">home</i></a>
+        </div> -->
+        <div class="mdl-layout__header-row">
+          <!-- <span class="mdl-layout-title" style="padding: 0 40px 0 10px;font-size: 20px">RealSmart</span> -->
+          <img id="RSIcon" src="images/realsmart_white.png" class="demo-avatar mdl-js-ripple-effect" style="width:50px;height:40px;margin-left: 5px;margin-right: 10px">
+          <span class="mdl-layout-title">Manufacturing > Devices > PA3168 > Subcon2 > TestParameters > Gains</span>
+          <div class="mdl-layout-spacer"></div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+            <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
+              <i class="material-icons">search</i>
+            </label>
+            <div class="mdl-textfield__expandable-holder">
+              <input class="mdl-textfield__input" type="text" id="search">
+              <label class="mdl-textfield__label" for="search">Enter your query...</label>
+            </div>
+          </div>
+          <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon mdl-badge-notification" data-badge="1" id="notification">
+            <i class="material-icons">notifications</i>
+          </button>
+            <!-- <span class="mdl-badge-notification" data-badge="1"></span> -->
+          <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+            <i class="material-icons">more_vert</i>
+          </button>
+          <img id="avatar" src="images/user.jpg" class="demo-avatar mdl-js-ripple-effect" style="width:30px;height:30px">
+            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="avatar">
+              <!-- <span class="mdl-menu__item">Jason Stuart</span>
+              <p class="mdl-menu__item">==============</p> -->
+              <li class="mdl-menu__item">Inbox</li>
+              <li class="mdl-menu__item">Profile</li>
+              <li class="mdl-menu__item">Sign Out</li>
+            </ul>
+          <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
+            <li class="mdl-menu__item">Settings</li>
+            <li class="mdl-menu__item">Contact</li>
+            <li class="mdl-menu__item">Legal information</li>
+            <li class="mdl-menu__item">About</li>
+          </ul>
+        </div>
+      </header>
+      
+      <div class="demo-drawer mdl-layout__drawer mdl-color--mylightblue-100 mdl-color-text--mywhite" style="top: 40px">  
+        <nav class="demo-navigation mdl-navigation mdl-color--mylightblue-100">
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--mywhite material-icons mdi mdi-menu" role="presentation"></i>Menu</a>  
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--mywhite material-icons" role="presentation">home</i>Home</a>  
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--mywhite material-icons mdi mdi-factory" role="presentation"></i>Manufacturing</a>
+            <span class="mdl-badge-drawer" data-badge="1"></span>
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--mywhite material-icons" role="presentation">flag</i>Updates</a>
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--mywhite material-icons" role="presentation">people</i>Chat</a>
+          <div class="mdl-layout-spacer"></div>
+          <a class="mdl-navigation__link" href=""><i class="mdl-color-text--mywhite material-icons" role="presentation">help_outline</i><span class="visuallyhidden">Help</span></a>
+        </nav>
+      </div>
+
+      <main class="mdl-layout__content mdl-color--grey-100">
+        <div class="mdl-grid demo-content">
+          <div class="demo-charts mdl-color--grey-100 mdl-cell mdl-cell--12-col mdl-grid">
+              <div class="mdl-button" onclick="SingleChart()">Single Chart</div>
+              <div class="mdl-button" onclick="DualChart()">Dual Chart</div>
+          </div>
+          <div class="demo-charts mdl-color--grey-100 mdl-cell mdl-cell--12-col mdl-grid">
+            <label id="label_Scroller1" style="position: relative; margin-left: 10px; top: 30px">Chart 1</label>
+            <div style="position: relative; float:right">
+              <div class="mdl-button" style="position: relative; float:right" onclick="settime_all()">All</div>
+              <div class="mdl-button" style="position: relative; float:right" onclick="settime_6month()">6 mth</div>
+              <div class="mdl-button" style="position: relative; float:right" onclick="settime_3month()">3 mth</div>
+            </div>
+            <div id="container_scroller" style="float: left; width: 100%; height: 60px;"></div>
+          </div>
+          <div class="demo-charts mdl-color--grey-100 mdl-cell mdl-cell--12-col mdl-grid">
+            <label id="label_Scroller2" style="position: relative; margin-left: 10px; top: 30px; height: 1px">Chart 2</label>
+            <div id="scroller_timeframe" style="position: relative; float:right; height: 1px">
+              <div id="settime_all2" class="mdl-button" style="float:right; height: 1px" onclick="settime_all2()">All</div>
+              <div id="settime_6mth2" class="mdl-button" style="float:right; height: 1px" onclick="settime_6month2()">6 mth</div>
+              <div id="settime_3mth2" class="mdl-button" style="float:right; height: 1px" onclick="settime_3month2()">3 mth</div>
+            </div>
+            <div id="container_scroller2" style="float: left; width: 100%; height: 1px;"></div>    
+          </div>
+          <div class="demo-charts mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col mdl-grid">
+            <div id="container" style="float: left ; width: 100%; height: 400px;"></div>
+          </div>
+          <div class="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col mdl-grid">
+            <div id="container7" style="float: top; width: 100%; height: 400px;"></div>
+          </div>
+          <div class="demo-graphs mdl-shadow--2dp mdl-color--white mdl-cell mdl-cell--12-col mdl-grid">
+            <div id="container5" style="float: top; width: 100%; height: 400px;"></div>
+          </div>
+      </main>
+    </div>
+    <script src="material.js"></script>    
+    <script type="text/javascript">
+  </script>
+  </body>
+</html>
